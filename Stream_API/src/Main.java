@@ -16,5 +16,6 @@ public class Main {
         System.out.println(sqList);
 
         list1.stream().map(i->i*i).forEach(System.out::println);
+
     }
 }
