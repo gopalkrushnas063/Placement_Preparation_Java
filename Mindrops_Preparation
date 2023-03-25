@@ -11,6 +11,8 @@ DELETE : http://localhost:8080/employee/{id} //PtahVariable
 URI : http://localhost:8080/employee/pageNo
 Pageable pageable = PageRequest.of(pageNo-1,totalPage);
 
+URI : http://localhost:8080/employees/{pageNumber}/{pageSize}
+
 +---------------+
 | Sorting :     |
 +---------------+
