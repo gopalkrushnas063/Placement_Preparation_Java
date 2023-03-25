@@ -1,0 +1,201 @@
+GET : http://localhost:8080/employee
+      http://localhost:8080/employee/{id}  // Get Employee Details BY ID
+POST :http://localhost:8080/employee
+PUT  :http://localhost:8080/employee/{id} // PathVariable
+DELETE : http://localhost:8080/employee/{id} //PtahVariable
+
+--------------------------------------------------------------------------------------
++---------------+
+| Pagination :  |
++---------------+
+URI : http://localhost:8080/employee/pageNo
+Pageable pageable = PageRequest.of(pageNo-1,totalPage);
+
++---------------+
+| Sorting :     |
++---------------+
+URI : http://localhost:8080/employee/sortByName
+Sort sortByName = Sort.by("name");
+
+Group Sorting :
+Sort sortByNameAndPrice = Sort.by("name").and(Sort.by(price).ascending());
+
+
+-------------------------------------------------------------------------------------- 
+
++---------------+
+|    MySQL :    |
++---------------+
+
+CREATE DATABASE emp_db;
+USE emp_db;
+
+CREATE TABLE employee(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+    age INT NOT NULL,
+    address VARCHAR(20),
+    ctc INT,
+    designation_id INT,
+    CONSTRAINT FOREIGN KEY (designation_id) REFERENCES designation(id)
+);
+
+DESC employee;
++----------------+-------------+------+-----+---------+----------------+
+| Field          | Type        | Null | Key | Default | Extra          |
++----------------+-------------+------+-----+---------+----------------+
+| id             | int         | NO   | PRI | NULL    | auto_increment |
+| name           | varchar(20) | NO   |     | NULL    |                |
+| age            | int         | NO   |     | NULL    |                |
+| address        | varchar(20) | YES  |     | NULL    |                |
+| ctc            | int         | YES  |     | NULL    |                |
+| designation_id | int         | YES  | MUL | NULL    |                |
++----------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+CREATE TABLE designation(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL
+);
+
+DESC designation;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int         | NO   | PRI | NULL    | auto_increment |
+| name  | varchar(20) | NO   |     | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+
+INSERT INTO designation(name) VALUE('CEO'),('MGR'),('AC'),('TL');
+
+SELECT * FROM designation;
++----+------+
+| id | name |
++----+------+
+|  1 | CEO  |
+|  2 | MGR  |
+|  3 | AC   |
+|  4 | TL   |
++----+------+
+4 rows in set (0.00 sec)
+
+
+INSERT INTO employee(name,age,address,ctc,designation_id) VALUE
+('Gopal',25,'Odisha',35000,1),
+('Hari',25,'Gujurat',45000,2),
+('Mohan',21,'UP',23000,4),
+('Madan',23,'MP',23000,3),
+('Ram',24,'NE',65000,2),
+('Krishna',29,'SE',35000,4),
+('Sudama',28,'Pune',36000,2),
+('Gobardhan',27,'Indore',36000,2),
+('Radha',20,'HR',37000,4),
+('Mira',21,'UK',65000,3),
+('Janki',26,'USA',34000,3),
+('Sita',24,'NY',25000,4);
+
+SELECT * FROM employee;
++----+-----------+-----+---------+-------+----------------+
+| id | name      | age | address | ctc   | designation_id |
++----+-----------+-----+---------+-------+----------------+
+|  1 | Gopal     |  25 | Odisha  | 35000 |              1 |
+|  2 | Hari      |  25 | Gujurat | 45000 |              2 |
+|  3 | Mohan     |  21 | UP      | 23000 |              4 |
+|  4 | Madan     |  23 | MP      | 23000 |              3 |
+|  5 | Ram       |  24 | NE      | 65000 |              2 |
+|  6 | Krishna   |  29 | SE      | 35000 |              4 |
+|  7 | Sudama    |  28 | Pune    | 36000 |              2 |
+|  8 | Gobardhan |  27 | Indore  | 36000 |              2 |
+|  9 | Radha     |  20 | HR      | 37000 |              4 |
+| 10 | Mira      |  21 | UK      | 65000 |              3 |
+| 11 | Janki     |  26 | USA     | 34000 |              3 |
+| 12 | Sita      |  24 | NY      | 25000 |              4 |
++----+-----------+-----+---------+-------+----------------+
+12 rows in set (0.00 sec)
+
+
+Designation Group By :
+----------------------
+SELECT d.name,count(*) AS emp_count 
+FROM employee e
+INNER JOIN 
+designation d
+ON e.designation_id = d.id
+GROUP BY d.name;
+
++------+-----------+
+| name | emp_count |
++------+-----------+
+| CEO  |         1 |
+| MGR  |         4 |
+| AC   |         3 |
+| TL   |         4 |
++------+-----------+
+4 rows in set (0.02 sec)
+
+
+Second Heighest Salary :
+------------------------
+
+Method 1 :
+----------
+SELECT MAX(ctc) AS Second_Heighest_Salary 
+FROM employee 
+WHERE 
+ctc < (SELECT MAX(ctc) FROM employee);
+
++------------------------+
+| Second_Heighest_Salary |
++------------------------+
+|                  45000 |
++------------------------+
+1 row in set (0.00 sec)
+
+Method 2 :
+----------
+SELECT ctc Second_Heighest_Salary FROM employee ORDER BY ctc DESC LIMIT 2,1;
++------------------------+
+| Second_Heighest_Salary |
++------------------------+
+|                  45000 |
++------------------------+
+1 row in set (0.01 sec)
+
+--GROUP BY and HAVING :
+------------------------
+SELECT d.id , COUNT(*) AS Total_Employee 
+FROM employee e
+INNER JOIN designation d 
+ON e.designation_id = d.id
+GROUP BY e.designation_ID
+HAVING Total_Employee  > 2;
+
++----+----------------+
+| id | Total_Employee |
++----+----------------+
+|  2 |              4 |
+|  3 |              3 |
+|  4 |              4 |
++----+----------------+
+3 rows in set (0.00 sec)
+
+--GROUP BY :
+------------
+SELECT d.id ,d.name, COUNT(*) AS Total_Employee 
+FROM employee e
+INNER JOIN designation d 
+ON e.designation_id = d.id
+GROUP BY e.designation_ID;
+
++----+------+----------------+
+| id | name | Total_Employee |
++----+------+----------------+
+|  1 | CEO  |              1 |
+|  2 | MGR  |              4 |
+|  3 | AC   |              3 |
+|  4 | TL   |              4 |
++----+------+----------------+
+4 rows in set (0.00 sec)
+
