@@ -1,0 +1,77 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Demo {
+    public static void main(String[] args) {
+        ArrayList<Student> students = new ArrayList<>();
+        students.add(new Student(15,"Mohan","12th"));
+        students.add(new Student(13,"Hari","9th"));
+        students.add(new Student(12,"Gopal","12th"));
+        students.add(new Student(14,"Ram","11th"));
+
+        System.out.println(students);
+        System.out.println("---------------------------------------");
+        Collections.sort(students);
+        //Comparable
+        students.forEach(System.out::println);
+    }
+}
+
+
+
+public class Student implements Comparable<Student>{
+    private int roll;
+    private String name;
+    private String std;
+
+    public Student() {
+    }
+
+
+    @Override
+    public int compareTo(Student o) {
+        return this.roll-o.roll;
+    }
+
+
+    public Student(int roll, String name, String std) {
+        this.roll = roll;
+        this.name = name;
+        this.std = std;
+    }
+
+    public int getRoll() {
+        return roll;
+    }
+
+    public void setRoll(int roll) {
+        this.roll = roll;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStd() {
+        return std;
+    }
+
+    public void setStd(String std) {
+        this.std = std;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "roll=" + roll +
+                ", name='" + name + '\'' +
+                ", std='" + std + '\'' +
+                '}';
+    }
+
+
+}
